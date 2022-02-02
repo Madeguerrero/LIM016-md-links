@@ -5,7 +5,7 @@ import * as path from "path";
 import { Remarkable } from "remarkable";
 let md = new Remarkable();
 import { JSDOM } from "jsdom";
-//import fetch from "node-fetch";
+import fetch from "node-fetch";
 
 /* -------- preguntando si la ruta existe ---------- */
 let rutaDeArchivos =
@@ -85,10 +85,50 @@ const rutasDeLinks = (rutaConvertidaEnAbsoluta) => {
   });
   return arrayLinks;
 };
-rutasDeLinks(rutaConvertidaEnAbsoluta); // llamamos a la funcion
+
+/* --------- uniendo los arreglos de objectos (lectura de un directorio) --------- */
+const arraysDeObjectosDeLinks = function (rutas) {
+  let arraysObjectosLinks = [];
+  rutas.forEach((e) => {
+    arraysObjectosLinks.push(rutasDeLinks(e));
+  });
+  return arraysObjectosLinks.flat();
+};
+
+//console.log(arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])));
 
 /* ----------- Peticiones HTTP que devuelvan una promesa,el status ------- */
-/*const httpStatus = (objectosLinks) => {
- const */
+const httpStatus = (arrayDeObjectos) => {
+  const arrayLinksStatus = arrayDeObjectos.map((e) =>
+    fetch(e.href)
+      .then((res) => ({
+        // aplicamos fetch a cada url
+        href: e.href,
+        text: e.text,
+        file: e.file,
+        status: res.status,
+        ok: res.status >= 200 && res.status < 300 ? "Ok" : "Fail", // utilizamos operadores ternarios
+      }))
+      .catch((err) => ({
+        href: e.href,
+        text: e.text.slice(0, 50),
+        file: e.file,
+        status: err.status,
+        ok: "Fail",
+      }))
+  );
+  return Promise.all(arrayLinksStatus);
+};
+//httpStatus(arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])))
+// .then((res) => console.log(res))
+// .catch((err) => console.log(error));
 
-//console.log(rutasDeLinks(process.argv[2]));
+export {
+  archivoExiste,
+  rutaEsAbsolutaAndConvirtiendola,
+  rutaEsDirectorio,
+  rutaTieneArchivos,
+  leyendoDirectorio,
+  rutasDeLinks,
+  httpStatus,
+};

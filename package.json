@@ -3,8 +3,42 @@
   "name": "md-links",
   "version": "0.1.0",
   "dependencies": {
+    "chalk": "^5.0.0",
+    "figlet": "^1.5.2",
     "jsdom": "^19.0.0",
     "node-fetch": "^3.2.0",
     "remarkable": "^2.0.1"
-  }
+  },
+  "description": "## Índice",
+  "main": "src/md-links.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.0",
+    "@babel/core": "^7.17.2",
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-modules-commonjs": "^7.16.8",
+    "@babel/preset-env": "^7.16.11",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
+    "regenerator-runtime": "^0.13.9"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose --coverage",
+    "build": "babel src -d src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Madeguerrero/LIM016-md-links.git"
+  },
+  "author": "Madeleine GR",
+  "license": "ISC",
+  "bin": {
+    "md-links": "cli.js"
+  },
+  "bugs": {
+    "url": "https://github.com/Madeguerrero/LIM016-md-links/issues"
+  },
+  "homepage": "https://github.com/Madeguerrero/LIM016-md-links#readme"
 }

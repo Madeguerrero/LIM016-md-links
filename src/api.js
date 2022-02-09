@@ -14,7 +14,7 @@ let ruta2 = "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/prueba/";
 
 const archivoExiste = fs.existsSync(rutaDeArchivos);
 if (fs.existsSync(rutaDeArchivos)) {
-  //console.log("la Ruta si existe");
+  //console.log("1,la Ruta si existe");
 } else {
   //console.error("la Ruta no existe");
 }
@@ -26,20 +26,20 @@ const rutaEsAbsolutaAndConvirtiendola = function (ruta) {
     return path.resolve(ruta);
   }
 };
-//console.log(rutaEsAbsolutaAndConvirtiendola(process.argv[2]));
+console.log("2", rutaEsAbsolutaAndConvirtiendola(process.argv[2]));
 //console.log(process.argv);
 
 /* --------- averiguando si es un directorio -------- */
 const rutaEsDirectorio = (ruta) => {
   return fs.lstatSync(ruta).isDirectory();
 };
-//console.log(`La ruta ${rutaEsDirectorio ? "es" : "no es"} un directorio `);
+//console.log("3", `La ruta ${rutaEsDirectorio ? "es" : "no es"} un directorio `);
 
 /* ---------- recorriendo si es un archivo ----------- */
 const rutaTieneArchivos = function (ruta) {
   return fs.statSync(ruta).isFile();
 };
-//console.log(rutaTieneArchivos(rutaConvertidaEnAbsoluta));
+//console.log("4",`La ruta ${rutaTieneArchivos ? "tiene" : "no tiene"} archivos `);
 //console.log(rutasDeLinks(process.argv[2]));
 
 /* --------- recorriendo el directorio recursivamente y extrayendo su extension ----------- */
@@ -65,7 +65,7 @@ const leyendoDirectorio = (ruta) => {
   return arrayDirectorio.flat(); // utilizando el metodo flat para regresar el array en una version aplanada
 };
 let rutaConvertidaEnAbsoluta = rutaEsAbsolutaAndConvirtiendola(process.argv[2]);
-//console.log(leyendoDirectorio(rutaConvertidaEnAbsoluta)); //devolvemos el resultado en consola que contiene los argumentos
+//console.log("5", leyendoDirectorio(rutaConvertidaEnAbsoluta)); //devolvemos el resultado en consola que contiene los argumentos
 
 /* ---------- leer los archivos y averiguando si contiene link, los convertimos en Html y retomamos una arreglo de objectos --------- */
 const rutasDeLinks = (rutaConvertidaEnAbsoluta) => {
@@ -87,7 +87,7 @@ const rutasDeLinks = (rutaConvertidaEnAbsoluta) => {
 };
 
 /* --------- uniendo los arreglos de objectos (lectura de un directorio) --------- */
-const arraysDeObjectosDeLinks = function (rutas) {
+const arraysDeObjectosDeLinks = (rutas) => {
   let arraysObjectosLinks = [];
   rutas.forEach((e) => {
     arraysObjectosLinks.push(rutasDeLinks(e));
@@ -95,7 +95,7 @@ const arraysDeObjectosDeLinks = function (rutas) {
   return arraysObjectosLinks.flat();
 };
 
-//console.log(arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])));
+//console.log("6", arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])));
 
 /* ----------- Peticiones HTTP que devuelvan una promesa,el status ------- */
 const httpStatus = (arrayDeObjectos) => {
@@ -113,15 +113,16 @@ const httpStatus = (arrayDeObjectos) => {
         href: e.href,
         text: e.text.slice(0, 50),
         file: e.file,
-        status: err.status,
+        status: 500,
+        message: err,
         ok: "Fail",
       }))
   );
   return Promise.all(arrayLinksStatus);
 };
 //httpStatus(arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])))
-// .then((res) => console.log(res))
-// .catch((err) => console.log(error));
+//.then((res) => console.log(res))
+//.catch((err) => console.log(error));
 
 export {
   archivoExiste,
@@ -130,5 +131,6 @@ export {
   rutaTieneArchivos,
   leyendoDirectorio,
   rutasDeLinks,
+  arraysDeObjectosDeLinks,
   httpStatus,
 };

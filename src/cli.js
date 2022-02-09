@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import mdLinks from "./md-links.js";
-import { linksTotal, linksUnique, linksRotos, help } from "./option";
+import { linksTotal, linksUnique, linksRotos, help } from "../src/option.js";
 import color from "chalk";
 import process from "process";
 import figlet from "figlet";

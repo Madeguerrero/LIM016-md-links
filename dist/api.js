@@ -8,21 +8,18 @@ import { JSDOM } from "jsdom";
 import fetch from "node-fetch";
 /* -------- preguntando si la ruta existe ---------- */
 
-let rutaDeArchivos =
-  "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.txt";
+let rutaDeArchivos = "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.txt";
 let ruta2 = "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/prueba/";
 let ruta = process.argv[2];
-
 const archivoExiste = fs.existsSync(rutaDeArchivos);
 
-if (fs.existsSync(rutaDeArchivos)) {
-  //console.log("1,la Ruta si existe");
-} else {
-  //console.error("la Ruta no existe");
+if (fs.existsSync(rutaDeArchivos)) {//console.log("1,la Ruta si existe");
+} else {//console.error("la Ruta no existe");
 }
 /* --------- averiguando si la ruta es absoluta?, y convirtiendola a absoluta --------- */
 
-const rutaEsAbsolutaAndConvirtiendola = (ruta) => {
+
+const rutaEsAbsolutaAndConvirtiendola = ruta => {
   if (path.isAbsolute(ruta)) {
     return ruta;
   } else {
@@ -33,11 +30,13 @@ const rutaEsAbsolutaAndConvirtiendola = (ruta) => {
 
 /* --------- averiguando si es un directorio -------- */
 
-const rutaEsDirectorio = (ruta) => {
+
+const rutaEsDirectorio = ruta => {
   return fs.lstatSync(ruta).isDirectory();
 }; //console.log("3", `La ruta ${rutaEsDirectorio ? "es" : "no es"} un directorio `);
 
 /* ---------- recorriendo si es un archivo ----------- */
+
 
 const rutaTieneArchivos = function (ruta) {
   return fs.statSync(ruta).isFile();
@@ -46,13 +45,14 @@ const rutaTieneArchivos = function (ruta) {
 
 /* --------- recorriendo el directorio recursivamente y extrayendo su extension ----------- */
 
-const leyendoDirectorio = (ruta) => {
+
+const leyendoDirectorio = ruta => {
   let arrayDirectorio = []; // array vacio-aqui se guardaran las rutas completas
 
   if (rutaEsDirectorio(ruta)) {
     const leerDirectorio = fs.readdirSync(ruta); //leyendo el directorio
 
-    leerDirectorio.map((elemento) => {
+    leerDirectorio.map(elemento => {
       const subRuta = path.join(ruta, elemento); // uniendo rutas
 
       if (rutaEsDirectorio(subRuta)) {
@@ -75,7 +75,7 @@ let rutaConvertidaEnAbsoluta = rutaEsAbsolutaAndConvirtiendola(process.argv[2]);
 
 /* ---------- leer los archivos y averiguando si contiene link, los convertimos en Html y retomamos una arreglo de objectos --------- */
 
-const rutasDeLinks = (rutaConvertidaEnAbsoluta) => {
+const rutasDeLinks = rutaConvertidaEnAbsoluta => {
   let arrayLinks = [];
   const leerArchivo = fs.readFileSync(rutaConvertidaEnAbsoluta, "utf-8"); //lectura del archivo y los unificamos
 
@@ -83,24 +83,24 @@ const rutasDeLinks = (rutaConvertidaEnAbsoluta) => {
 
   const archivoEnFormatoHtml = new JSDOM(convirtiendoloArchivoEnHtml); // analiza el html
 
-  const extrayendoEtiqueta =
-    archivoEnFormatoHtml.window.document.querySelectorAll("a"); // extraemos todas las etiquetas "a"
+  const extrayendoEtiqueta = archivoEnFormatoHtml.window.document.querySelectorAll("a"); // extraemos todas las etiquetas "a"
 
-  extrayendoEtiqueta.forEach((e) => {
+  extrayendoEtiqueta.forEach(e => {
     //recorremos por el archivo convertido en html
     arrayLinks.push({
       href: e.toString(),
       text: e.textContent.slice(0, 50),
-      file: rutaConvertidaEnAbsoluta,
+      file: rutaConvertidaEnAbsoluta
     });
   });
   return arrayLinks;
 };
 /* --------- uniendo los arreglos de objectos (lectura de un directorio) --------- */
 
-const arraysDeObjectosDeLinks = (rutas) => {
+
+const arraysDeObjectosDeLinks = rutas => {
   let arraysObjectosLinks = [];
-  rutas.forEach((e) => {
+  rutas.forEach(e => {
     arraysObjectosLinks.push(rutasDeLinks(e));
   });
   return arraysObjectosLinks.flat();
@@ -108,38 +108,28 @@ const arraysDeObjectosDeLinks = (rutas) => {
 
 /* ----------- Peticiones HTTP que devuelvan una promesa,el status ------- */
 
-const httpStatus = (arrayDeObjectos) => {
-  const arrayLinksStatus = arrayDeObjectos.map((e) =>
-    fetch(e.href)
-      .then((res) => ({
-        // aplicamos fetch a cada url
-        href: e.href,
-        text: e.text,
-        file: e.file,
-        status: res.status,
-        ok: res.status >= 200 && res.status < 300 ? "Ok" : "Fail", // utilizamos operadores ternarios
-      }))
-      .catch((err) => ({
-        href: e.href,
-        text: e.text.slice(0, 50),
-        file: e.file,
-        status: 500,
-        message: err,
-        ok: "Fail",
-      }))
-  );
+
+const httpStatus = arrayDeObjectos => {
+  const arrayLinksStatus = arrayDeObjectos.map(e => fetch(e.href).then(res => ({
+    // aplicamos fetch a cada url
+    href: e.href,
+    text: e.text,
+    file: e.file,
+    status: res.status,
+    ok: res.status >= 200 && res.status < 300 ? "Ok" : "Fail" // utilizamos operadores ternarios
+
+  })).catch(err => ({
+    href: e.href,
+    text: e.text.slice(0, 50),
+    file: e.file,
+    status: 500,
+    message: err,
+    ok: "Fail"
+  })));
   return Promise.all(arrayLinksStatus);
 }; //httpStatus(arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])))
 //.then((res) => console.log(res))
 //.catch((err) => console.log(error));
 
-export {
-  archivoExiste,
-  rutaEsAbsolutaAndConvirtiendola,
-  rutaEsDirectorio,
-  rutaTieneArchivos,
-  leyendoDirectorio,
-  rutasDeLinks,
-  arraysDeObjectosDeLinks,
-  httpStatus,
-};
+
+export { archivoExiste, rutaEsAbsolutaAndConvirtiendola, rutaEsDirectorio, rutaTieneArchivos, leyendoDirectorio, rutasDeLinks, arraysDeObjectosDeLinks, httpStatus };

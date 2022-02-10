@@ -3,7 +3,9 @@
   "name": "md-links",
   "version": "0.1.0",
   "dependencies": {
+    "ansi-styles": "^6.1.0",
     "chalk": "^5.0.0",
+    "colors": "^1.4.0",
     "figlet": "^1.5.2",
     "jsdom": "^19.0.0",
     "node-fetch": "^3.2.0",
@@ -25,8 +27,9 @@
     "regenerator-runtime": "^0.13.9"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose --coverage",
-    "build": "babel src -d src"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --env=node --coverage",
+    "build": "babel src  -d dist",
+    "start": "node dist"
   },
   "repository": {
     "type": "git",

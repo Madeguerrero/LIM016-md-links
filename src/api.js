@@ -7,19 +7,11 @@ let md = new Remarkable();
 import { JSDOM } from "jsdom";
 import fetch from "node-fetch";
 /* -------- preguntando si la ruta existe ---------- */
+const ruta = process.argv[2];
 
-let rutaDeArchivos =
-  "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.txt";
-let ruta2 = "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/prueba/";
-let ruta = process.argv[2];
+const archivoExiste = (ruta) => fs.existsSync(ruta);
+//console.log("1. existe la ruta?", archivoExiste(ruta));
 
-const archivoExiste = fs.existsSync(rutaDeArchivos);
-
-if (fs.existsSync(rutaDeArchivos)) {
-  //console.log("1,la Ruta si existe");
-} else {
-  //console.error("la Ruta no existe");
-}
 /* --------- averiguando si la ruta es absoluta?, y convirtiendola a absoluta --------- */
 
 const rutaEsAbsolutaAndConvirtiendola = (ruta) => {
@@ -28,21 +20,22 @@ const rutaEsAbsolutaAndConvirtiendola = (ruta) => {
   } else {
     return path.resolve(ruta);
   }
-}; //console.log("2", rutaEsAbsolutaAndConvirtiendola(process.argv[2]));
-//console.log(process.argv);
+};
+//console.log(rutaEsAbsolutaAndConvirtiendola(ruta));
 
 /* --------- averiguando si es un directorio -------- */
 
 const rutaEsDirectorio = (ruta) => {
   return fs.lstatSync(ruta).isDirectory();
-}; //console.log("3", `La ruta ${rutaEsDirectorio ? "es" : "no es"} un directorio `);
+};
+//console.log("3", `La ruta ${rutaEsDirectorio ? "es" : "no es"} un directorio `);
 
 /* ---------- recorriendo si es un archivo ----------- */
 
 const rutaTieneArchivos = function (ruta) {
   return fs.statSync(ruta).isFile();
-}; //console.log("4",`La ruta ${rutaTieneArchivos ? "tiene" : "no tiene"} archivos `);
-//console.log(rutasDeLinks(process.argv[2]));
+};
+//console.log("La ruta es un archivo?:", rutaTieneArchivos(ruta));
 
 /* --------- recorriendo el directorio recursivamente y extrayendo su extension ----------- */
 
@@ -70,8 +63,7 @@ const leyendoDirectorio = (ruta) => {
 
   return arrayDirectorio.flat(); // utilizando el metodo flat para regresar el array en una version aplanada
 };
-
-let rutaConvertidaEnAbsoluta = rutaEsAbsolutaAndConvirtiendola(process.argv[2]); //console.log("5", leyendoDirectorio(rutaConvertidaEnAbsoluta)); //devolvemos el resultado en consola que contiene los argumentos
+//console.log("5", leyendoDirectorio(rutaEsAbsolutaAndConvirtiendola(ruta))); //devolvemos el resultado en consola que contiene los argumentos
 
 /* ---------- leer los archivos y averiguando si contiene link, los convertimos en Html y retomamos una arreglo de objectos --------- */
 
@@ -104,7 +96,8 @@ const arraysDeObjectosDeLinks = (rutas) => {
     arraysObjectosLinks.push(rutasDeLinks(e));
   });
   return arraysObjectosLinks.flat();
-}; //console.log("6", arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])));
+};
+//console.log("6", arraysDeObjectosDeLinks(leyendoDirectorio(ruta)));
 
 /* ----------- Peticiones HTTP que devuelvan una promesa,el status ------- */
 
@@ -129,7 +122,8 @@ const httpStatus = (arrayDeObjectos) => {
       }))
   );
   return Promise.all(arrayLinksStatus);
-}; //httpStatus(arraysDeObjectosDeLinks(leyendoDirectorio(process.argv[2])))
+};
+//httpStatus(arraysDeObjectosDeLinks(leyendoDirectorio(ruta)))
 //.then((res) => console.log(res))
 //.catch((err) => console.log(error));
 

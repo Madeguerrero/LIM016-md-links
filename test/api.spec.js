@@ -9,9 +9,6 @@ import {
 } from "../src/api.js";
 
 describe("averiguando si la ruta existe", () => {
-  it("deberia ser una función", () => {
-    expect(typeof archivoExiste).toBe("function");
-  });
   it("debe devolver verdadero si la ruta existe", () => {
     expect(
       archivoExiste(
@@ -29,9 +26,6 @@ describe("averiguando si la ruta existe", () => {
 });
 
 describe("rutaEsAbsolutaAndConvirtiendola", () => {
-  it("deberia ser una función", () => {
-    expect(typeof rutaEsAbsolutaAndConvirtiendola).toBe("function");
-  });
   it("deberia retornar verdadero si la ruta es absoluta", () => {
     expect(
       rutaEsAbsolutaAndConvirtiendola(
@@ -43,38 +37,36 @@ describe("rutaEsAbsolutaAndConvirtiendola", () => {
     expect(rutaEsAbsolutaAndConvirtiendola("MD-Links")).toBeFalsy;
   });
   it("deberia retornar la ruta relativa convertida a absoluta", () => {
-    expect(rutaConvertidaEnAbsoluta("MD-Links")).toBe(
-      "\\Users\\madeleine\\Desktop\\MD-LINKS"
+    expect(rutaEsAbsolutaAndConvirtiendola("README.md")).toEqual(
+      "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/README.md"
     );
   });
 });
 
 describe("rutaEsDirectorio", () => {
-  it("deberia ser una función", () => {
-    expect(typeof rutaEsDirectorio).toBe("function");
-  });
   it("deberia devolver vedadero si la ruta es un directorio", () => {
     expect(
       rutaEsDirectorio("/Users/madeleine/Desktop/MD-Links/LIM016-md-links")
     ).toBeTruthy;
   });
   it("deberia devolver falso si la ruta no es un directorio", () => {
-    expect(rutaEsDirectorio("archivo.txt")).toBeFalsy;
+    expect(
+      rutaEsDirectorio(
+        "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.txt"
+      )
+    ).toBeFalsy;
   });
 });
 
 describe("rutaTieneArchivos", () => {
-  it("deberia ser una function", () => {
-    expect(typeof rutaTieneArchivos).toBe("function");
-  });
-  it("deberia retornar verdadero si la ruta es un archivo", () => {
+  it("deberia retornar verdadero si la ruta tiene un archivo", () => {
     expect(
       rutaTieneArchivos(
-        "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.txt"
+        "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/enlaces.md"
       )
     ).toBeTruthy;
   });
-  it("deberia retornar falso si la ruta no es un archivo", () => {
+  it("deberia retornar falso si la ruta no tiene archivos", () => {
     expect(
       rutaTieneArchivos(
         "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas"
@@ -84,40 +76,52 @@ describe("rutaTieneArchivos", () => {
 });
 
 describe("filtrando los archivos .md", () => {
-  it("deberia ser una function", () => {
-    expect(typeof leyendoDirectorio).toBe("function");
-  });
-  it("deberia devolver un array con los archivos .md ", () => {
-    expect(leyendoDirectorio("LIM016-md-links")).toEqual([
-      "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/README.md",
+  it("deberia recorrer la ruta y devolver un array con los archivos .md ", () => {
+    expect(
+      leyendoDirectorio(
+        "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1"
+      )
+    ).toEqual([
+      "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.md",
     ]);
   });
 });
 
 describe("arraysDeObjectosDeLinks", () => {
-  it("deberia ser una function", () => {
-    expect(typeof arraysDeObjectosDeLinks).toBe("function");
-  });
   it("deberia retornar un array de objectos con información del link (href,text,file)", () => {
     const rutaArray = [
       {
-        href: "https://www.npmjs.com/",
-        text: "Sitio oficial de npm (en inglés)",
-        file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/README.md",
+        href: "https://jestjs.io/",
+        text: "Jest",
+        file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.md",
+      },
+      {
+        href: "https://www.w3schools.com/",
+        text: "Jest",
+        file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.md",
+      },
+      {
+        href: "https://desarrolloweb.com/",
+        text: "Jest",
+        file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.md",
+      },
+      {
+        href: "https://www.pipsnacks.com/404",
+        text: "enlace roto",
+        file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1/archivo.md",
       },
     ];
     expect(
       arraysDeObjectosDeLinks(
-        "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/README.md"
+        leyendoDirectorio(
+          "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/pruebas/prueba1"
+        )
       )
     ).toEqual(rutaArray);
   });
 });
 
 describe("status de los links", () => {
-  it("deberia ser una function", () => {
-    expect(typeof httpStatus).toBe("function");
-  });
   it("deberia retornar un array con informacion de link (href,text,file,status,mensaje,ok)", async () => {
     const links = [
       {
@@ -133,21 +137,21 @@ describe("status de los links", () => {
     ];
     const linksStatus = [
       {
-        href: "https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback",
-        text: "Leer un archivo",
-        file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/README.md",
-        status: 200,
-        ok: "Ok",
-      },
-      {
         href: "https://docs.npmjs.com/getting-started/publishing-npm-packages",
         text: "Crear módulos en Node.js",
         file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/README.md",
         status: 200,
         ok: "Ok",
       },
+      {
+        href: "https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback",
+        text: "Leer un archivo",
+        file: "/Users/madeleine/Desktop/MD-Links/LIM016-md-links/README.md",
+        status: 200,
+        ok: "Ok",
+      },
     ];
     const element = await httpStatus(links);
-    expect(element).toEqual(linksStatus);
+    expect(element).toStrictEqual(linksStatus);
   });
 });

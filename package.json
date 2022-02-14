@@ -12,7 +12,7 @@
     "remarkable": "^2.0.1"
   },
   "description": "## Índice",
-  "main": "src/md-links.js",
+  "main": "md-links.js",
   "directories": {
     "test": "test"
   },
@@ -38,7 +38,7 @@
   "author": "Madeleine GR",
   "license": "ISC",
   "bin": {
-    "md-links": "src/cli.js"
+    "md-links": "cli.js"
   },
   "bugs": {
     "url": "https://github.com/Madeguerrero/LIM016-md-links/issues"

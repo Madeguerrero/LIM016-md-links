@@ -1,6 +1,6 @@
 import * as api from "./api.js";
 
-const mdLinks = (path, options) => {
+export const mdLinks = (path, options = {}) => {
   return new Promise((resolve, reject) => {
     if (!api.archivoExiste(path)) {
       //Nos devuelve un resultado booleano(true)
@@ -14,7 +14,9 @@ const mdLinks = (path, options) => {
       reject("No se encontraron archivos md");
     }
 
-    const todosLosLinks = api.arraysDeObjectosDeLinks(api.rutaEsAbsolutaAndConvirtiendola);
+    const todosLosLinks = api.arraysDeObjectosDeLinks(
+      api.leyendoDirectorio(rutaAbsoluta)
+    );
 
     if (todosLosLinks.length === 0) {
       //si la longitud del link es igual a 0 nos retorna un error
@@ -22,13 +24,9 @@ const mdLinks = (path, options) => {
     }
 
     if (options.validate) {
-      api.httpStatus(todosLosLinks).then(statusLinks => resolve(statusLinks));
+      api.httpStatus(todosLosLinks).then((statusLinks) => resolve(statusLinks));
     } else {
       resolve(todosLosLinks);
     }
   });
-};
-
-export default {
-  mdLinks
 };
